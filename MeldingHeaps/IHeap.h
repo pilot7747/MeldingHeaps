@@ -14,4 +14,6 @@ public:
     virtual T GetMin() = 0;
     virtual T ExtractMin() = 0;
     virtual void Union(IHeap<T> &heap) = 0;
+    virtual bool Empty() = 0;
+    virtual ~IHeap() {};
 };

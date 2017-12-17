@@ -15,65 +15,66 @@
 #include <utility>
 
 
+
 template <typename T>
 class BinomialHeap final : public IHeap<T> {
-public: class Node;
-private: Node head;
-    
 public:
-    BinomialHeap() : head() {}
+    BinomialHeap() : _head() {}
+    ~BinomialHeap() {
+        _DeleteTree(_head.next);
+        _DeleteTree(_head.down);
+    }
     void Insert(T val);
     T GetMin();
     T ExtractMin();
     void Union(IHeap<T> &heap);
-private:
-    static std::size_t safeLeftShift(std::size_t val, int shift);
-    void merge(Node *other);
-    
-public: class Node final {
-public:
-    T value;
-    int rank;
-    
-    Node *down;
-    Node *next;
-    
-    Node() : value(), rank(-1), down(nullptr), next(nullptr) {}
-    
-    Node(const T &val) : value(val), rank(0), down(nullptr), next(nullptr) {}
-    Node(T &&val) : value(std::move(val)), rank(0), down(nullptr), next(nullptr) {}
-    ~Node() {
-        delete down;
-        delete next;
-    }
-    Node *removeRoot() {
-        assert(next == nullptr);
-        Node *node = down;
-        down = nullptr;
-        Node *result = nullptr;
-        while (node != nullptr) {
-            Node *next = node->next;
-            node->next = result;
-            result = node;
-            node = next;
+    bool Empty();
+    class Node final {
+    public:
+        T value;
+        int rank;
+        Node *down;
+        Node *next;
+        Node() : value(), rank(-1), down(nullptr), next(nullptr) {}
+        Node(const T &val) : value(val), rank(0), down(nullptr), next(nullptr) {}
+        Node(T &&val) : value(std::move(val)), rank(0), down(nullptr), next(nullptr) {}
+        Node *removeRoot() {
+            assert(next == nullptr);
+            Node *node = down;
+            down = nullptr;
+            Node *result = nullptr;
+            while (node != nullptr) {
+                Node *next = node->next;
+                node->next = result;
+                result = node;
+                node = next;
+            }
+            return result;
         }
-        return result;
-    }
-};
-
+    };
+    
+private:
+    void _DeleteTree(Node* root);
+    void _merge(Node *other);
+    Node _head;
 };
 
 template<typename T>
 void BinomialHeap<T>::Insert(T val) {
-    merge(new BinomialHeap<T>::Node(val));
+    _merge(new BinomialHeap<T>::Node(val));
+}
+
+template<typename T>
+bool BinomialHeap<T>::Empty() {
+    return (_head.next == nullptr);
 }
 
 template<typename T>
 T BinomialHeap<T>::GetMin() {
-    if (head.next == nullptr)
+    if (_head.next == nullptr)
         throw "Empty heap";
     const T *result = nullptr;
-    for (const Node *node = head.next; node != nullptr; node = node->next) {
+    for (const Node *node = _head.next; node != nullptr; node = node->next) {
         if (result == nullptr || node->value < *result)
             result = &node->value;
     }
@@ -82,11 +83,11 @@ T BinomialHeap<T>::GetMin() {
 
 template<typename T>
 T BinomialHeap<T>::ExtractMin() {
-    if (head.next == nullptr)
+    if (_head.next == nullptr)
         throw "Empty heap";
     T *min = nullptr;
     Node *nodeBeforeMin = nullptr;
-    for (Node *prevNode = &head; ; ) {
+    for (Node *prevNode = &_head; ; ) {
         Node *node = prevNode->next;
         if (node == nullptr)
             break;
@@ -102,7 +103,7 @@ T BinomialHeap<T>::ExtractMin() {
     assert(min == &minNode->value);
     nodeBeforeMin->next = minNode->next;
     minNode->next = nullptr;
-    merge(minNode->removeRoot());
+    _merge(minNode->removeRoot());
     T result = std::move(*min);
     delete minNode;
     return result;
@@ -113,18 +114,18 @@ void BinomialHeap<T>::Union(IHeap<T> &other) {
     BinomialHeap<T> &cHeap = static_cast<BinomialHeap<T>&>(other);
     if (&cHeap == this)
         throw "Merging with self";
-    merge(cHeap.head.next);
-    cHeap.head.next = nullptr;
+    _merge(cHeap._head.next);
+    cHeap._head.next = nullptr;
 }
 
 template<typename T>
-void BinomialHeap<T>::merge(Node *other) {
-    assert(head.rank == -1);
+void BinomialHeap<T>::_merge(Node *other) {
+    assert(_head.rank == -1);
     assert(other == nullptr || other->rank >= 0);
-    Node *self = head.next;
-    head.next = nullptr;
+    Node *self = _head.next;
+    _head.next = nullptr;
     Node *prevTail = nullptr;
-    Node *tail = &head;
+    Node *tail = &_head;
     
     while (self != nullptr || other != nullptr) {
         Node *node;
@@ -154,19 +155,19 @@ void BinomialHeap<T>::merge(Node *other) {
             }
             node->next = tail->down;
             tail->down = node;
-            tail->rank++;
+            ++tail->rank;
         } else
             throw "Assertion error";
     }
 }
 
 template<typename T>
-std::size_t BinomialHeap<T>::safeLeftShift(std::size_t val, int shift) {
-    if (shift < 0)
-        throw "Negative shift";
-    for (int i = 0; i < shift && val != 0; i++)
-        val <<= 1;
-    return val;
+void BinomialHeap<T>::_DeleteTree(BinomialHeap<T>::Node* root) {
+    if (root == nullptr)
+        return;
+    if(root->next != nullptr) _DeleteTree(root->next);
+    if(root->down != nullptr) _DeleteTree(root->down);
+    delete root;
 }
 
 #endif /* BinomialHeap2_h */

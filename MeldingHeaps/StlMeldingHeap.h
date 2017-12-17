@@ -2,7 +2,7 @@
 //  StlMeldingHeap.h
 //  MeldingHeaps
 //
-//  Created by Никита on 06.12.2017.
+//  Created by Nikita Pavlichenko on 06.12.2017.
 //  Copyright © 2017 Nikita Pavlichenko. All rights reserved.
 //
 
@@ -19,16 +19,23 @@ public:
     T GetMin();
     T ExtractMin();
     void Union(IHeap<T> &heap);
+    bool Empty();
     StlMeldingHeap(T key);
     StlMeldingHeap() {}
+    ~StlMeldingHeap() {}
 private:
     std::set<T> _container;
 };
 
 template<typename T>
+bool StlMeldingHeap<T>::Empty() {
+    return _container.empty();
+}
+template<typename T>
 void StlMeldingHeap<T>::Union(IHeap<T> &heap) {
     StlMeldingHeap &tempHeap = static_cast<StlMeldingHeap&>(heap);
     _container.insert(tempHeap._container.begin(), tempHeap._container.end());
+    tempHeap._container.clear();
 }
 
 template<typename T>
