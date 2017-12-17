@@ -12,7 +12,6 @@
 #include "SkewHeap.h"
 #include "StlMeldingHeap.h"
 #include "IHeap.h"
-#include "tests.h"
 #include "Testing.h"
 #include <fstream>
 #include "Stopwatch.h"
@@ -38,30 +37,31 @@ TEST_F(SimpleTests, size15) {
 }
 
 TEST_F(SimpleTests, size100) {
-    
+    ASSERT_EQ(tester.startTest(100), "passed");
 }
 
 TEST_F(SimpleTests, size1000) {
-    
+    ASSERT_EQ(tester.startTest(1000), "passed");
 }
 TEST_F(SimpleTests, size2000) {
-
+    ASSERT_EQ(tester.startTest(2000), "passed");
 }
 
 //----------STRESS TESTING-----------
 TEST_F(StressTests, size5000) {
- 
+    ASSERT_EQ(tester.startTest(5000), "passed");
 }
 
 TEST_F(StressTests, size6000) {
- 
+    ASSERT_EQ(tester.startTest(6000), "passed");
 }
 
 TEST_F(StressTests, size7000) {
-
+    ASSERT_EQ(tester.startTest(7000), "passed");
 }
 
-TEST_F(StressTests, size10001) {
+TEST_F(StressTests, size10000) {
+    ASSERT_EQ(tester.startTest(10000), "passed");
     /*stopwatch.start();
     
     std::string check = checkTest<LeftistHeap<int>, StlMeldingHeap<int>>("test10001.txt");

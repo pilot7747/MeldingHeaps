@@ -10,15 +10,15 @@
 #define BinaryTree_h
 
 template<typename T>
-struct node {
-    node* left;
-    node* right;
+struct Node {
+    Node* left;
+    Node* right;
     T key;
     size_t dist;
 };
 
 template <typename T>
-using BinaryTree = node<T>*;
+using BinaryTree = Node<T>*;
 
 template <typename T>
 void DeleteTree(BinaryTree<T> root) {
@@ -35,7 +35,7 @@ void DeleteTree(BinaryTree<T> root) {
 
 template <typename T>
 BinaryTree<T> make_binary_tree(T key) {
-    node<T>* tempNode = new node<T>();
+    Node<T>* tempNode = new Node<T>();
     tempNode->left = nullptr;
     tempNode->right = nullptr;
     tempNode->key = key;

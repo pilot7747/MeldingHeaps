@@ -35,6 +35,8 @@
 		1185F7111FDBF53D00381B91 /* tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tests.h; sourceTree = "<group>"; };
 		1185F7121FDD8A7400381B91 /* SkewHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SkewHeap.h; sourceTree = "<group>"; };
 		1185F7131FDD8C3000381B91 /* Stopwatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Stopwatch.h; sourceTree = "<group>"; };
+		11A039541FE5855F0009C4DE /* LeftistLikeHeap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LeftistLikeHeap.h; sourceTree = "<group>"; };
+		11A039551FE5A67E0009C4DE /* Testing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Testing.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +80,8 @@
 				1185F70D1FD80B7500381B91 /* StlMeldingHeap.h */,
 				1185F7121FDD8A7400381B91 /* SkewHeap.h */,
 				1185F7131FDD8C3000381B91 /* Stopwatch.h */,
+				11A039541FE5855F0009C4DE /* LeftistLikeHeap.h */,
+				11A039551FE5A67E0009C4DE /* Testing.h */,
 			);
 			path = MeldingHeaps;
 			sourceTree = "<group>";

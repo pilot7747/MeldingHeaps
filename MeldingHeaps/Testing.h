@@ -151,19 +151,19 @@ private:
 class Tester {
 public:
     std::string startTest(size_t size) {
-        std::vector<IHeap<int>*> leftist;
-        std::vector<IHeap<int>*> skew;
-        std::vector<IHeap<int>*> binomial;
         const size_t optimalHeapNum = 10;
+        std::vector<IHeap<int>*> leftist(optimalHeapNum);
+        std::vector<IHeap<int>*> skew(optimalHeapNum);
+        std::vector<IHeap<int>*> binomial(optimalHeapNum);
         for (int i = 0; i < optimalHeapNum; ++i) {
             LeftistHeap<int> lef;
-            LeftistHeap<int> * p = &lef;
-            p->Insert(1);
+            /*IHeap<int> *p = &lef;
+            p->Insert(1);*/
             SkewHeap<int> skw;
             BinomialHeap<int> bnml;
-            leftist.push_back(&lef);
-            skew.push_back(&skw);
-            binomial.push_back(&bnml);
+            leftist[i] = new LeftistHeap<int>();
+            skew[i] = new SkewHeap<int>();
+            binomial[i] = new BinomialHeap<int>();
         }
         TestResult res;
         res = fullyRandom(leftist, size);
@@ -201,38 +201,21 @@ public:
     
 private:
     TestResult fullyRandom(std::vector<IHeap<int>*> &heaps, size_t size) {
-        TestResult ans;
-        ans.passed = true;
-        std::vector<StlMeldingHeap<int>*> exampleHeaps(heaps.size());
-        std::vector<StlMeldingHeap<int>*>::iterator exmpIt = exampleHeaps.begin() + 1;
-        for (std::vector<IHeap<int>*>::iterator it = heaps.begin() + 1; it != heaps.end(); ++it) {
-            if (heaps.front()->Empty()) {
-                Test t = _generator.createRandomTest(size);
-                TestResult res;
-                res = _checker.testPassed(heaps.front(), exampleHeaps.front(), t);
-                ans = res;
-            } else {
-                Test t = _generator.createRandomTest(size);
-                TestResult res;
-                res = _checker.testPassed(*it, *exmpIt, t);
-                ans.comb(res);
-                
-                heaps.front()->Union(**it);
-                exampleHeaps.front()->Union(**exmpIt);
-                t = _generator.createRandomTest(size / 2);
-                res = _checker.testPassed(heaps.front(), exampleHeaps.front(), t);
-                ans.comb(res);
-            }
-            ++exmpIt;
-        }
-        return ans;
+        return randomOrWithClearing(heaps, size, 0);
     }
     //--Same but with fully clearing of heap--
     TestResult withClearing(std::vector<IHeap<int>*> &heaps, size_t size) {
+       return randomOrWithClearing(heaps, size, 1);
+    }
+    TestResult randomOrWithClearing(std::vector<IHeap<int>*> &heaps, size_t size, int type) {
         TestResult ans;
         ans.passed = true;
         std::vector<StlMeldingHeap<int>*> exampleHeaps(heaps.size());
-        std::vector<StlMeldingHeap<int>*>::iterator exmpIt = exampleHeaps.begin() + 1;
+        std::vector<StlMeldingHeap<int>*>::iterator exmpIt = exampleHeaps.begin();
+        for (; exmpIt != exampleHeaps.end(); ++exmpIt) {
+            *exmpIt = new StlMeldingHeap<int>();
+        }
+        exmpIt = exampleHeaps.begin() + 1;
         for (std::vector<IHeap<int>*>::iterator it = heaps.begin() + 1; it != heaps.end(); ++it) {
             if (heaps.front()->Empty()) {
                 Test t = _generator.createRandomTest(size);
@@ -247,7 +230,12 @@ private:
                 
                 heaps.front()->Union(**it);
                 exampleHeaps.front()->Union(**exmpIt);
-                res = _checker.clearing(heaps.front(), exampleHeaps.front());
+                if (type == 0) {
+                    t = _generator.createRandomTest(size / 2);
+                    res = _checker.testPassed(heaps.front(), exampleHeaps.front(), t);
+                } else if (type == 1) {
+                    res = _checker.clearing(heaps.front(), exampleHeaps.front());
+                }
                 ans.comb(res);
             }
             ++exmpIt;
